@@ -4,7 +4,8 @@ import 'dart:math';
 import 'package:http/http.dart' as http;
 
 class GeminiService {
-  static const String _apiKey = 'AIzaSyA6bNJ4cUPUuzei-clbS0DNuaXvyuFYIGk';
+  static const String apiKey =
+      'Your API Key Here'; // <-- REPLACE WITH YOUR API KEY';
   static const String _model = 'gemini-2.5-flash'; // correct string
   static const String _baseUrl =
       'https://generativelanguage.googleapis.com/v1beta/models/$_model:generateContent';
@@ -66,7 +67,7 @@ SEASONAL_ADVICE: [1 sentence]
       try {
         final response = await http
             .post(
-              Uri.parse('$_baseUrl?key=$_apiKey'),
+              Uri.parse('$_baseUrl?key=$apiKey'),
               headers: {'Content-Type': 'application/json'},
               body: jsonEncode(requestBody),
             )

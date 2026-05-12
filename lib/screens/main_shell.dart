@@ -1,19 +1,27 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../theme/app_theme.dart';
 import 'home_screen.dart';
 import 'history_screen.dart';
 import 'profile_screen.dart';
 
+// Global key — must be defined here and imported wherever needed
+final mainShellKey = GlobalKey<MainShellState>();
+
 class MainShell extends StatefulWidget {
   const MainShell({super.key});
+
   @override
-  State<MainShell> createState() => _MainShellState();
+  State<MainShell> createState() => MainShellState();
 }
 
-class _MainShellState extends State<MainShell> {
+class MainShellState extends State<MainShell> {
   int _index = 0;
+
+  // Called from anywhere via mainShellKey.currentState?.switchTab(n)
+  void switchTab(int index) {
+    setState(() => _index = index);
+  }
 
   final _screens = const [HomeScreen(), HistoryScreen(), ProfileScreen()];
 
@@ -62,9 +70,9 @@ class _MainShellState extends State<MainShell> {
               _navItem(0, Icons.home_rounded, Icons.home_outlined, 'Home'),
               _navItem(
                 1,
-                Icons.history_rounded,
-                Icons.history_outlined,
-                'History',
+                Icons.checkroom_rounded,
+                Icons.checkroom_outlined,
+                'Vault',
               ),
               _navItem(
                 2,

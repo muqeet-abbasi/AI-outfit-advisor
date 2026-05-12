@@ -2,8 +2,11 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:uuid/uuid.dart';
 import '../theme/app_theme.dart';
 import '../models/outfit_analysis.dart';
+import '../models/saved_outfit.dart';
+import '../services/vault_service.dart';
 import '../widgets/suggestion_chip.dart';
 
 class ResultScreen extends StatefulWidget {
@@ -17,6 +20,8 @@ class ResultScreen extends StatefulWidget {
 class _ResultScreenState extends State<ResultScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabs;
+  bool _saved = false;
+  bool _saving = false;
 
   @override
   void initState() {
@@ -29,6 +34,50 @@ class _ResultScreenState extends State<ResultScreen>
   void dispose() {
     _tabs.dispose();
     super.dispose();
+  }
+
+  Future<void> _saveToVault() async {
+    if (_saved || _saving) return;
+    setState(() => _saving = true);
+
+    final outfit = SavedOutfit(
+      id: const Uuid().v4(),
+      imagePath: widget.image.path,
+      analysis: widget.analysis,
+      savedAt: DateTime.now(),
+    );
+
+    await VaultService.instance.save(outfit);
+
+    if (!mounted) return;
+    setState(() {
+      _saved = true;
+      _saving = false;
+    });
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+            const Icon(
+              Icons.check_circle_rounded,
+              color: Colors.white,
+              size: 18,
+            ),
+            const SizedBox(width: 10),
+            Text(
+              'Saved to Wardrobe Vault!',
+              style: GoogleFonts.outfit(color: Colors.white, fontSize: 13),
+            ),
+          ],
+        ),
+        backgroundColor: AppTheme.success,
+        behavior: SnackBarBehavior.floating,
+        margin: const EdgeInsets.all(16),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        duration: const Duration(seconds: 2),
+      ),
+    );
   }
 
   @override
@@ -50,6 +99,7 @@ class _ResultScreenState extends State<ResultScreen>
                 ],
               ),
             ),
+            _buildBottomBar(),
           ],
         ),
       ),
@@ -97,7 +147,6 @@ class _ResultScreenState extends State<ResultScreen>
                 ),
               ),
             ),
-            // Score overlay
             Positioned(
               bottom: 24,
               left: 22,
@@ -186,6 +235,148 @@ class _ResultScreenState extends State<ResultScreen>
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildBottomBar() {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(22, 12, 22, 28),
+      decoration: BoxDecoration(
+        color: AppTheme.bg,
+        border: Border(top: BorderSide(color: AppTheme.border, width: 0.5)),
+      ),
+      child: Row(
+        children: [
+          // Back button
+          GestureDetector(
+            onTap: () => Navigator.pop(context),
+            child: Container(
+              width: 52,
+              height: 52,
+              decoration: BoxDecoration(
+                color: AppTheme.bgSecondary,
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(color: AppTheme.border),
+              ),
+              child: const Icon(
+                Icons.arrow_back_ios_new_rounded,
+                size: 16,
+                color: AppTheme.inkMid,
+              ),
+            ),
+          ),
+          const SizedBox(width: 12),
+          // Save to vault button
+          Expanded(
+            child:
+                GestureDetector(
+                      onTap: _saving ? null : _saveToVault,
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 350),
+                        curve: Curves.easeInOut,
+                        height: 52,
+                        decoration: BoxDecoration(
+                          color: _saved
+                              ? AppTheme.success
+                              : _saving
+                              ? AppTheme.ink.withOpacity(0.7)
+                              : AppTheme.ink,
+                          borderRadius: BorderRadius.circular(14),
+                          boxShadow: [
+                            BoxShadow(
+                              color: (_saved ? AppTheme.success : AppTheme.ink)
+                                  .withOpacity(0.2),
+                              blurRadius: 16,
+                              offset: const Offset(0, 6),
+                            ),
+                          ],
+                        ),
+                        child: AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 300),
+                          child: _saving
+                              ? Row(
+                                  key: const ValueKey('saving'),
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    SizedBox(
+                                      width: 16,
+                                      height: 16,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        valueColor: AlwaysStoppedAnimation(
+                                          AppTheme.ice,
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 10),
+                                    Text(
+                                      'Saving...',
+                                      style: GoogleFonts.outfit(
+                                        color: Colors.white,
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              : _saved
+                              ? Row(
+                                  key: const ValueKey('saved'),
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    const Icon(
+                                      Icons.check_circle_rounded,
+                                      color: Colors.white,
+                                      size: 20,
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Text(
+                                      'Saved to Vault',
+                                      style: GoogleFonts.outfit(
+                                        color: Colors.white,
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              : Row(
+                                  key: const ValueKey('idle'),
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Container(
+                                      width: 28,
+                                      height: 28,
+                                      decoration: BoxDecoration(
+                                        color: AppTheme.ice,
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      child: const Icon(
+                                        Icons.save_outlined,
+                                        color: Colors.white,
+                                        size: 16,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 10),
+                                    Text(
+                                      'Save to Wardrobe Vault',
+                                      style: GoogleFonts.outfit(
+                                        color: Colors.white,
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                        ),
+                      ),
+                    )
+                    .animate()
+                    .fadeIn(delay: 200.ms, duration: 400.ms)
+                    .slideY(begin: 0.2, curve: Curves.easeOut),
+          ),
+        ],
       ),
     );
   }
@@ -278,7 +469,7 @@ class _OverviewTab extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppTheme.bgTertiary,
+        color: AppTheme.bgSecondary,
         borderRadius: BorderRadius.circular(14),
         border: Border.all(color: AppTheme.border),
       ),
@@ -289,7 +480,7 @@ class _OverviewTab extends StatelessWidget {
             width: 36,
             height: 36,
             decoration: BoxDecoration(
-              color: AppTheme.bgSecondary,
+              color: AppTheme.bgTertiary,
               borderRadius: BorderRadius.circular(10),
             ),
             child: Icon(icon, size: 18, color: AppTheme.iceDeep),
@@ -334,11 +525,6 @@ class _AnalysisTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final score = analysis.styleScore;
-    final color = score >= 80
-        ? AppTheme.success
-        : score >= 60
-        ? AppTheme.iceDeep
-        : AppTheme.warning;
     final label = score >= 85
         ? 'Runway Ready'
         : score >= 70
@@ -350,7 +536,6 @@ class _AnalysisTab extends StatelessWidget {
     return ListView(
       padding: const EdgeInsets.fromLTRB(22, 8, 22, 40),
       children: [
-        // Score bar card
         Container(
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
@@ -404,7 +589,6 @@ class _AnalysisTab extends StatelessWidget {
             ],
           ),
         ).animate().fadeIn(duration: 400.ms),
-
         const SizedBox(height: 16),
         _listCard(
           'What Works',

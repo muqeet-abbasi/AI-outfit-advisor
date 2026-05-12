@@ -3,6 +3,8 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../theme/app_theme.dart';
 import 'analyze_screen.dart';
+import 'occasion_planner_screen.dart';
+import 'main_shell.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -84,14 +86,12 @@ class HomeScreen extends StatelessWidget {
             ),
             child: Stack(
               children: [
-                // Background pattern
                 Positioned.fill(
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(24),
                     child: CustomPaint(painter: _DotsPainter()),
                   ),
                 ),
-                // Content
                 Padding(
                   padding: const EdgeInsets.all(28),
                   child: Column(
@@ -216,16 +216,16 @@ class HomeScreen extends StatelessWidget {
         AppTheme.bgSecondary,
       ),
       _Action(
-        Icons.history_rounded,
-        'History',
-        'Past analyses',
+        Icons.checkroom_outlined,
+        'Wardrobe',
+        'Your saved looks',
         AppTheme.success,
         AppTheme.successBg,
       ),
       _Action(
-        Icons.tips_and_updates_outlined,
-        'Tips',
-        'Style advice',
+        Icons.event_rounded,
+        'Occasion',
+        'Plan your outfit',
         AppTheme.warning,
         AppTheme.warningBg,
       ),
@@ -256,7 +256,13 @@ class HomeScreen extends StatelessWidget {
             final a = e.value;
             return GestureDetector(
                   onTap: () {
-                    if (i == 0 || i == 1) _goAnalyze(context);
+                    if (i == 0 || i == 1) {
+                      _goAnalyze(context);
+                    } else if (i == 2) {
+                      _goWardrobe();
+                    } else if (i == 3) {
+                      _goOccasionPlanner(context);
+                    }
                   },
                   child: Container(
                     padding: const EdgeInsets.all(16),
@@ -416,6 +422,28 @@ class HomeScreen extends StatelessWidget {
           child: child,
         ),
         transitionDuration: const Duration(milliseconds: 450),
+      ),
+    );
+  }
+
+  // Uses the GlobalKey directly — no context needed, works from anywhere
+  void _goWardrobe() {
+    mainShellKey.currentState?.switchTab(1);
+  }
+
+  void _goOccasionPlanner(BuildContext context) {
+    Navigator.push(
+      context,
+      PageRouteBuilder(
+        pageBuilder: (_, a, __) => const OccasionPlannerScreen(),
+        transitionsBuilder: (_, a, __, child) => SlideTransition(
+          position: Tween<Offset>(
+            begin: const Offset(1, 0),
+            end: Offset.zero,
+          ).animate(CurvedAnimation(parent: a, curve: Curves.easeOutCubic)),
+          child: child,
+        ),
+        transitionDuration: const Duration(milliseconds: 400),
       ),
     );
   }
