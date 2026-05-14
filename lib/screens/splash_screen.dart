@@ -12,16 +12,16 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen>
     with SingleTickerProviderStateMixin {
-  late AnimationController _ctrl;
+  late AnimationController _progressCtrl;
 
   @override
   void initState() {
     super.initState();
-    _ctrl = AnimationController(
+    _progressCtrl = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 2),
-    );
-    _ctrl.forward();
+      duration: const Duration(milliseconds: 2600),
+    )..forward();
+
     Future.delayed(const Duration(milliseconds: 3200), () {
       if (!mounted) return;
       Navigator.pushReplacement(
@@ -38,7 +38,7 @@ class _SplashScreenState extends State<SplashScreen>
 
   @override
   void dispose() {
-    _ctrl.dispose();
+    _progressCtrl.dispose();
     super.dispose();
   }
 
@@ -46,90 +46,126 @@ class _SplashScreenState extends State<SplashScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppTheme.ink,
-      body: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // Animated logo mark
-            Container(
-                  width: 80,
-                  height: 80,
-                  decoration: BoxDecoration(
-                    color: AppTheme.ice,
-                    borderRadius: BorderRadius.circular(24),
-                  ),
-                  child: const Icon(
-                    Icons.auto_awesome_rounded,
-                    color: Colors.white,
-                    size: 40,
-                  ),
-                )
-                .animate()
-                .scale(
-                  begin: const Offset(0.3, 0.3),
-                  duration: 700.ms,
-                  curve: Curves.elasticOut,
-                )
-                .fadeIn(duration: 400.ms),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 32),
+          child: Column(
+            children: [
+              const Spacer(flex: 3),
 
-            const SizedBox(height: 24),
+              // Logo + name
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Icon mark
+                  Container(
+                        width: 56,
+                        height: 56,
+                        decoration: BoxDecoration(
+                          color: AppTheme.ice,
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: const Icon(
+                          Icons.auto_awesome_rounded,
+                          color: Colors.white,
+                          size: 26,
+                        ),
+                      )
+                      .animate()
+                      .fadeIn(duration: 500.ms)
+                      .slideY(begin: 0.3, curve: Curves.easeOut),
 
-            ShaderMask(
-                  shaderCallback: (b) => const LinearGradient(
-                    colors: [Color(0xFF7DD3FC), Color(0xFFFFFFFF)],
-                  ).createShader(b),
-                  child: Text(
-                    'StyleAI',
+                  const SizedBox(height: 20),
+
+                  // App name
+                  Text(
+                        'StyleAI',
+                        style: GoogleFonts.outfit(
+                          color: Colors.white,
+                          fontSize: 44,
+                          fontWeight: FontWeight.w800,
+                          letterSpacing: -2,
+                          height: 1,
+                        ),
+                      )
+                      .animate()
+                      .fadeIn(delay: 200.ms, duration: 600.ms)
+                      .slideY(begin: 0.2, curve: Curves.easeOut),
+
+                  const SizedBox(height: 10),
+
+                  // Tagline
+                  Text(
+                    'Your AI fashion advisor.',
                     style: GoogleFonts.outfit(
-                      color: Colors.white,
-                      fontSize: 42,
-                      fontWeight: FontWeight.w800,
-                      letterSpacing: -2,
+                      color: Colors.white.withOpacity(0.35),
+                      fontSize: 16,
+                      fontWeight: FontWeight.w400,
                     ),
-                  ),
-                )
-                .animate()
-                .fadeIn(delay: 500.ms, duration: 600.ms)
-                .slideY(begin: 0.3, curve: Curves.easeOut),
-
-            const SizedBox(height: 8),
-
-            Text(
-              'Your AI Fashion Advisor',
-              style: GoogleFonts.outfit(
-                color: Colors.white38,
-                fontSize: 14,
-                fontWeight: FontWeight.w400,
+                  ).animate().fadeIn(delay: 400.ms, duration: 600.ms),
+                ],
               ),
-            ).animate().fadeIn(delay: 900.ms, duration: 500.ms),
 
-            const SizedBox(height: 60),
+              const Spacer(flex: 3),
 
-            // Loading bar
-            Container(
-              width: 120,
-              height: 2,
-              decoration: BoxDecoration(
-                color: Colors.white10,
-                borderRadius: BorderRadius.circular(2),
-              ),
-              child: AnimatedBuilder(
-                animation: _ctrl,
-                builder: (_, __) {
-                  return FractionallySizedBox(
-                    alignment: Alignment.centerLeft,
-                    widthFactor: _ctrl.value,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: AppTheme.ice,
-                        borderRadius: BorderRadius.circular(2),
+              // Bottom section
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Progress bar
+                  Container(
+                    height: 1.5,
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.08),
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                    child: AnimatedBuilder(
+                      animation: _progressCtrl,
+                      builder: (_, __) => FractionallySizedBox(
+                        alignment: Alignment.centerLeft,
+                        widthFactor: _progressCtrl.value,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: AppTheme.ice,
+                            borderRadius: BorderRadius.circular(2),
+                          ),
+                        ),
                       ),
                     ),
-                  );
-                },
+                  ).animate().fadeIn(delay: 700.ms, duration: 500.ms),
+
+                  const SizedBox(height: 20),
+
+                  // Bottom row
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Powered by Gemini Vision',
+                        style: GoogleFonts.outfit(
+                          color: Colors.white.withOpacity(0.2),
+                          fontSize: 12,
+                        ),
+                      ),
+                      AnimatedBuilder(
+                        animation: _progressCtrl,
+                        builder: (_, __) => Text(
+                          '${(_progressCtrl.value * 100).toInt()}%',
+                          style: GoogleFonts.outfit(
+                            color: Colors.white.withOpacity(0.2),
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ).animate().fadeIn(delay: 700.ms, duration: 500.ms),
+
+                  const SizedBox(height: 32),
+                ],
               ),
-            ).animate().fadeIn(delay: 1200.ms),
-          ],
+            ],
+          ),
         ),
       ),
     );

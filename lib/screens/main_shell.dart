@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../theme/app_theme.dart';
 import 'home_screen.dart';
 import 'history_screen.dart';
 import 'profile_screen.dart';
+import 'occasion_planner_screen.dart';
 
-// Global key — must be defined here and imported wherever needed
 final mainShellKey = GlobalKey<MainShellState>();
 
 class MainShell extends StatefulWidget {
@@ -15,34 +17,128 @@ class MainShell extends StatefulWidget {
   State<MainShell> createState() => MainShellState();
 }
 
-class MainShellState extends State<MainShell> {
+class MainShellState extends State<MainShell> with TickerProviderStateMixin {
   int _index = 0;
+  int _prevIndex = 0;
 
-  // Called from anywhere via mainShellKey.currentState?.switchTab(n)
-  void switchTab(int index) {
-    setState(() => _index = index);
+  late final List<AnimationController> _iconControllers;
+  late final List<Animation<double>> _iconScales;
+  late final AnimationController _pillCtrl;
+  late final Animation<double> _pillAnim;
+
+  final _screens = const [
+    HomeScreen(),
+    HistoryScreen(),
+    OccasionPlannerScreen(),
+    ProfileScreen(),
+  ];
+
+  final _navItems = const [
+    _NavItem(Icons.home_rounded, Icons.home_outlined, 'Home'),
+    _NavItem(Icons.checkroom_rounded, Icons.checkroom_outlined, 'Vault'),
+    _NavItem(
+      Icons.auto_fix_high_outlined,
+      Icons.auto_fix_high_outlined,
+      'Planner',
+    ),
+    _NavItem(Icons.person_rounded, Icons.person_outline_rounded, 'Profile'),
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+
+    _iconControllers = List.generate(
+      _navItems.length,
+      (i) => AnimationController(
+        vsync: this,
+        duration: const Duration(milliseconds: 300),
+      ),
+    );
+
+    _iconScales = _iconControllers.map((c) {
+      return TweenSequence<double>([
+        TweenSequenceItem(
+          tween: Tween(
+            begin: 1.0,
+            end: 0.75,
+          ).chain(CurveTween(curve: Curves.easeIn)),
+          weight: 40,
+        ),
+        TweenSequenceItem(
+          tween: Tween(
+            begin: 0.75,
+            end: 1.15,
+          ).chain(CurveTween(curve: Curves.easeOut)),
+          weight: 40,
+        ),
+        TweenSequenceItem(
+          tween: Tween(
+            begin: 1.15,
+            end: 1.0,
+          ).chain(CurveTween(curve: Curves.easeInOut)),
+          weight: 20,
+        ),
+      ]).animate(c);
+    }).toList();
+
+    _pillCtrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 400),
+    );
+    _pillAnim = CurvedAnimation(parent: _pillCtrl, curve: Curves.easeOutCubic);
+
+    // Trigger initial icon bounce
+    _iconControllers[0].forward();
   }
 
-  final _screens = const [HomeScreen(), HistoryScreen(), ProfileScreen()];
+  @override
+  void dispose() {
+    for (final c in _iconControllers) {
+      c.dispose();
+    }
+    _pillCtrl.dispose();
+    super.dispose();
+  }
+
+  void switchTab(int index) {
+    if (_index == index) return;
+    _onTabTap(index);
+  }
+
+  void _onTabTap(int index) {
+    if (_index == index) return;
+    HapticFeedback.lightImpact();
+    setState(() {
+      _prevIndex = _index;
+      _index = index;
+    });
+    _iconControllers[index].forward(from: 0);
+    _pillCtrl.forward(from: 0);
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppTheme.bg,
+      extendBody: true,
       body: AnimatedSwitcher(
-        duration: const Duration(milliseconds: 300),
-        switchInCurve: Curves.easeOut,
-        switchOutCurve: Curves.easeIn,
-        transitionBuilder: (child, anim) => FadeTransition(
-          opacity: anim,
-          child: SlideTransition(
-            position: Tween<Offset>(
-              begin: const Offset(0, 0.02),
-              end: Offset.zero,
-            ).animate(anim),
-            child: child,
-          ),
-        ),
+        duration: const Duration(milliseconds: 320),
+        switchInCurve: Curves.easeOutCubic,
+        switchOutCurve: Curves.easeInCubic,
+        transitionBuilder: (child, anim) {
+          final isForward = _index > _prevIndex;
+          return SlideTransition(
+            position:
+                Tween<Offset>(
+                  begin: Offset(isForward ? 0.06 : -0.06, 0),
+                  end: Offset.zero,
+                ).animate(
+                  CurvedAnimation(parent: anim, curve: Curves.easeOutCubic),
+                ),
+            child: FadeTransition(opacity: anim, child: child),
+          );
+        },
         child: KeyedSubtree(key: ValueKey(_index), child: _screens[_index]),
       ),
       bottomNavigationBar: _buildNavBar(),
@@ -56,77 +152,104 @@ class MainShellState extends State<MainShell> {
         border: Border(top: BorderSide(color: AppTheme.border, width: 0.5)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
-            blurRadius: 20,
-            offset: const Offset(0, -4),
+            color: Colors.black.withOpacity(0.06),
+            blurRadius: 24,
+            offset: const Offset(0, -6),
           ),
         ],
       ),
       child: SafeArea(
+        top: false,
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
           child: Row(
-            children: [
-              _navItem(0, Icons.home_rounded, Icons.home_outlined, 'Home'),
-              _navItem(
-                1,
-                Icons.checkroom_rounded,
-                Icons.checkroom_outlined,
-                'Vault',
-              ),
-              _navItem(
-                2,
-                Icons.person_rounded,
-                Icons.person_outline_rounded,
-                'Profile',
-              ),
-            ],
+            children: List.generate(_navItems.length, (i) {
+              return Expanded(child: _buildNavItem(i));
+            }),
           ),
         ),
       ),
+    ).animate().slideY(
+      begin: 1,
+      end: 0,
+      duration: 600.ms,
+      delay: 200.ms,
+      curve: Curves.easeOutCubic,
     );
   }
 
-  Widget _navItem(int i, IconData active, IconData inactive, String label) {
+  Widget _buildNavItem(int i) {
     final selected = _index == i;
-    return Expanded(
-      child: GestureDetector(
-        onTap: () => setState(() => _index = i),
-        behavior: HitTestBehavior.opaque,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 250),
-          padding: const EdgeInsets.symmetric(vertical: 8),
-          decoration: BoxDecoration(
-            color: selected
-                ? AppTheme.ice.withOpacity(0.1)
-                : Colors.transparent,
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Column(
+    final item = _navItems[i];
+
+    return GestureDetector(
+      onTap: () => _onTabTap(i),
+      behavior: HitTestBehavior.opaque,
+      child: AnimatedBuilder(
+        animation: _iconControllers[i],
+        builder: (_, __) {
+          return Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              AnimatedSwitcher(
-                duration: const Duration(milliseconds: 200),
-                child: Icon(
-                  selected ? active : inactive,
-                  key: ValueKey(selected),
-                  color: selected ? AppTheme.iceDeep : AppTheme.inkHint,
-                  size: 24,
+              // Icon container with animated pill bg
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeOutCubic,
+                width: selected ? 56 : 44,
+                height: 34,
+                decoration: BoxDecoration(
+                  color: selected ? AppTheme.ink : Colors.transparent,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Center(
+                  child: ScaleTransition(
+                    scale: _iconScales[i],
+                    child: Icon(
+                      selected ? item.activeIcon : item.inactiveIcon,
+                      size: 22,
+                      color: selected ? Colors.white : AppTheme.inkHint,
+                    ),
+                  ),
                 ),
               ),
+
               const SizedBox(height: 4),
-              Text(
-                label,
+
+              // Label
+              AnimatedDefaultTextStyle(
+                duration: const Duration(milliseconds: 250),
                 style: GoogleFonts.outfit(
-                  color: selected ? AppTheme.iceDeep : AppTheme.inkHint,
-                  fontSize: 11,
-                  fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
+                  color: selected ? AppTheme.ink : AppTheme.inkHint,
+                  fontSize: 10,
+                  fontWeight: selected ? FontWeight.w700 : FontWeight.w400,
+                  letterSpacing: selected ? 0.2 : 0,
+                ),
+                child: Text(item.label),
+              ),
+
+              // Active dot indicator
+              const SizedBox(height: 2),
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeOutCubic,
+                width: selected ? 16 : 0,
+                height: 3,
+                decoration: BoxDecoration(
+                  color: AppTheme.ice,
+                  borderRadius: BorderRadius.circular(2),
                 ),
               ),
             ],
-          ),
-        ),
+          );
+        },
       ),
     );
   }
+}
+
+class _NavItem {
+  final IconData activeIcon;
+  final IconData inactiveIcon;
+  final String label;
+  const _NavItem(this.activeIcon, this.inactiveIcon, this.label);
 }

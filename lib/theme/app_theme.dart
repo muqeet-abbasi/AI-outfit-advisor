@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
-  static const Color bg = Color(0xFFFFFFFF);
-  static const Color bgSecondary = Color(0xFFF0F4F8);
+  static const Color bg = Color(0xFFF8FAFC);
+  static const Color bgWhite = Color(0xFFFFFFFF);
+  static const Color bgSecondary = Color(0xFFF1F5F9);
   static const Color bgTertiary = Color(0xFFE8EEF4);
   static const Color ink = Color(0xFF0F172A);
   static const Color inkMid = Color(0xFF334155);
@@ -21,6 +22,25 @@ class AppTheme {
   static const Color warning = Color(0xFFD97706);
   static const Color warningBg = Color(0xFFFFFBEB);
   static const Color error = Color(0xFFDC2626);
+  static const Color errorBg = Color(0xFFFEF2F2);
+
+  // Gradient presets
+  static const LinearGradient iceGradient = LinearGradient(
+    colors: [Color(0xFF38BDF8), Color(0xFF0284C7)],
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+  );
+
+  static const LinearGradient inkGradient = LinearGradient(
+    colors: [Color(0xFF1E293B), Color(0xFF0F172A)],
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+  );
+
+  static const LinearGradient shimmerGradient = LinearGradient(
+    colors: [Color(0xFFE2E8F0), Color(0xFFF8FAFC), Color(0xFFE2E8F0)],
+    stops: [0.0, 0.5, 1.0],
+  );
 
   static ThemeData get lightTheme => ThemeData(
     useMaterial3: true,
@@ -29,7 +49,7 @@ class AppTheme {
     colorScheme: const ColorScheme.light(
       primary: ice,
       secondary: iceDeep,
-      surface: bg,
+      surface: bgWhite,
       error: error,
     ),
     textTheme: GoogleFonts.outfitTextTheme().copyWith(

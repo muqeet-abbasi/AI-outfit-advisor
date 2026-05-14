@@ -261,7 +261,7 @@ class HomeScreen extends StatelessWidget {
                     } else if (i == 2) {
                       _goWardrobe();
                     } else if (i == 3) {
-                      _goOccasionPlanner(context);
+                      _goOccasionPlanner();
                     }
                   },
                   child: Container(
@@ -431,21 +431,8 @@ class HomeScreen extends StatelessWidget {
     mainShellKey.currentState?.switchTab(1);
   }
 
-  void _goOccasionPlanner(BuildContext context) {
-    Navigator.push(
-      context,
-      PageRouteBuilder(
-        pageBuilder: (_, a, __) => const OccasionPlannerScreen(),
-        transitionsBuilder: (_, a, __, child) => SlideTransition(
-          position: Tween<Offset>(
-            begin: const Offset(1, 0),
-            end: Offset.zero,
-          ).animate(CurvedAnimation(parent: a, curve: Curves.easeOutCubic)),
-          child: child,
-        ),
-        transitionDuration: const Duration(milliseconds: 400),
-      ),
-    );
+  void _goOccasionPlanner() {
+    mainShellKey.currentState?.switchTab(2);
   }
 
   String _greeting() {

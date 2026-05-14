@@ -198,7 +198,7 @@ Respond ONLY in this exact JSON format with absolutely no markdown, no backticks
       body: SafeArea(
         child: Column(
           children: [
-            _buildHeader(context),
+            _buildHeader(),
             Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -223,29 +223,12 @@ Respond ONLY in this exact JSON format with absolutely no markdown, no backticks
     );
   }
 
-  Widget _buildHeader(BuildContext context) {
+  Widget _buildHeader() {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+      padding: const EdgeInsets.fromLTRB(24, 28, 24, 0),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          GestureDetector(
-            onTap: () => Navigator.pop(context),
-            child: Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                color: AppTheme.bgSecondary,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: AppTheme.border),
-              ),
-              child: const Icon(
-                Icons.arrow_back_ios_new_rounded,
-                size: 16,
-                color: AppTheme.inkMid,
-              ),
-            ),
-          ),
-          const SizedBox(width: 16),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -257,32 +240,34 @@ Respond ONLY in this exact JSON format with absolutely no markdown, no backticks
                   fontWeight: FontWeight.w700,
                   letterSpacing: 2,
                 ),
-              ),
+              ).animate().fadeIn(duration: 400.ms),
               Text(
                 'Planner',
                 style: GoogleFonts.outfit(
                   color: AppTheme.ink,
-                  fontSize: 22,
+                  fontSize: 28,
                   fontWeight: FontWeight.w800,
-                  letterSpacing: -0.5,
+                  letterSpacing: -1,
                 ),
-              ),
+              ).animate().fadeIn(delay: 80.ms),
             ],
           ),
-          const Spacer(),
           Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              color: AppTheme.ink,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: const Icon(
-              Icons.event_rounded,
-              color: Colors.white,
-              size: 20,
-            ),
-          ),
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(
+                  color: AppTheme.ink,
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: const Icon(
+                  Icons.event_rounded,
+                  color: Colors.white,
+                  size: 20,
+                ),
+              )
+              .animate()
+              .fadeIn(delay: 200.ms)
+              .scale(begin: const Offset(0.7, 0.7)),
         ],
       ),
     );

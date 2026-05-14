@@ -152,8 +152,6 @@ class _LoadingOverlayState extends State<LoadingOverlay>
               const SizedBox(height: 16),
               _buildTypewriter(),
               const SizedBox(height: 36),
-              _buildWaveform(),
-              const SizedBox(height: 36),
               _buildStepList(),
             ],
           ),
@@ -440,36 +438,36 @@ class _LoadingOverlayState extends State<LoadingOverlay>
   }
 
   // ── Waveform visualizer ───────────────────────────────────────────
-  Widget _buildWaveform() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'SIGNAL',
-          style: GoogleFonts.outfit(
-            color: AppTheme.inkHint,
-            fontSize: 9,
-            fontWeight: FontWeight.w700,
-            letterSpacing: 2,
-          ),
-        ),
-        const SizedBox(height: 10),
-        AnimatedBuilder(
-          animation: _waveCtrl,
-          builder: (_, __) {
-            return CustomPaint(
-              size: const Size(double.infinity, 40),
-              painter: _WaveformPainter(
-                t: _waveCtrl.value,
-                color: AppTheme.iceDeep,
-                dimColor: AppTheme.iceDim.withOpacity(0.4),
-              ),
-            );
-          },
-        ),
-      ],
-    );
-  }
+  // Widget _buildWaveform() {
+  //   return Column(
+  //     crossAxisAlignment: CrossAxisAlignment.start,
+  //     children: [
+  //       Text(
+  //         'SIGNAL',
+  //         style: GoogleFonts.outfit(
+  //           color: AppTheme.inkHint,
+  //           fontSize: 9,
+  //           fontWeight: FontWeight.w700,
+  //           letterSpacing: 2,
+  //         ),
+  //       ),
+  //       const SizedBox(height: 10),
+  //       AnimatedBuilder(
+  //         animation: _waveCtrl,
+  //         builder: (_, __) {
+  //           return CustomPaint(
+  //             size: const Size(double.infinity, 40),
+  //             painter: _WaveformPainter(
+  //               t: _waveCtrl.value,
+  //               color: AppTheme.iceDeep,
+  //               dimColor: AppTheme.iceDim.withOpacity(0.4),
+  //             ),
+  //           );
+  //         },
+  //       ),
+  //     ],
+  //   );
+  // }
 
   // ── Step progress list ────────────────────────────────────────────
   Widget _buildStepList() {
