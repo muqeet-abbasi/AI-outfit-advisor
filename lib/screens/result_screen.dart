@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:ai_outfit_advisor/screens/style_chat_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -241,7 +242,7 @@ class _ResultScreenState extends State<ResultScreen>
 
   Widget _buildBottomBar() {
     return Container(
-      padding: const EdgeInsets.fromLTRB(22, 12, 22, 28),
+      padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
       decoration: BoxDecoration(
         color: AppTheme.bg,
         border: Border(top: BorderSide(color: AppTheme.border, width: 0.5)),
@@ -252,8 +253,8 @@ class _ResultScreenState extends State<ResultScreen>
           GestureDetector(
             onTap: () => Navigator.pop(context),
             child: Container(
-              width: 52,
-              height: 52,
+              width: 50,
+              height: 50,
               decoration: BoxDecoration(
                 color: AppTheme.bgSecondary,
                 borderRadius: BorderRadius.circular(14),
@@ -266,115 +267,141 @@ class _ResultScreenState extends State<ResultScreen>
               ),
             ),
           ),
-          const SizedBox(width: 12),
+
+          const SizedBox(width: 10),
+
+          // Style Chat button
+          GestureDetector(
+            onTap: () => Navigator.push(
+              context,
+              PageRouteBuilder(
+                pageBuilder: (_, a, __) => StyleChatScreen(
+                  image: widget.image,
+                  analysis: widget.analysis,
+                ),
+                transitionsBuilder: (_, a, __, child) => SlideTransition(
+                  position:
+                      Tween<Offset>(
+                        begin: const Offset(1, 0),
+                        end: Offset.zero,
+                      ).animate(
+                        CurvedAnimation(parent: a, curve: Curves.easeOutCubic),
+                      ),
+                  child: child,
+                ),
+                transitionDuration: const Duration(milliseconds: 400),
+              ),
+            ),
+            child: Container(
+              width: 50,
+              height: 50,
+              decoration: BoxDecoration(
+                color: AppTheme.bgSecondary,
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(color: AppTheme.border),
+              ),
+              child: const Icon(
+                Icons.chat_outlined,
+                size: 20,
+                color: AppTheme.iceDeep,
+              ),
+            ),
+          ),
+
+          const SizedBox(width: 10),
+
           // Save to vault button
           Expanded(
-            child:
-                GestureDetector(
-                      onTap: _saving ? null : _saveToVault,
-                      child: AnimatedContainer(
-                        duration: const Duration(milliseconds: 350),
-                        curve: Curves.easeInOut,
-                        height: 52,
-                        decoration: BoxDecoration(
-                          color: _saved
-                              ? AppTheme.success
-                              : _saving
-                              ? AppTheme.ink.withOpacity(0.7)
-                              : AppTheme.ink,
-                          borderRadius: BorderRadius.circular(14),
-                          boxShadow: [
-                            BoxShadow(
-                              color: (_saved ? AppTheme.success : AppTheme.ink)
-                                  .withOpacity(0.2),
-                              blurRadius: 16,
-                              offset: const Offset(0, 6),
+            child: GestureDetector(
+              onTap: _saving ? null : _saveToVault,
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 350),
+                curve: Curves.easeInOut,
+                height: 50,
+                decoration: BoxDecoration(
+                  color: _saved ? AppTheme.success : AppTheme.ink,
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 300),
+                  child: _saving
+                      ? Row(
+                          key: const ValueKey('saving'),
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SizedBox(
+                              width: 16,
+                              height: 16,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                valueColor: AlwaysStoppedAnimation(
+                                  AppTheme.ice,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 10),
+                            Text(
+                              'Saving...',
+                              style: GoogleFonts.outfit(
+                                color: Colors.white,
+                                fontSize: 15,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        )
+                      : _saved
+                      ? Row(
+                          key: const ValueKey('saved'),
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(
+                              Icons.check_circle_rounded,
+                              color: Colors.white,
+                              size: 20,
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              'Saved to Vault',
+                              style: GoogleFonts.outfit(
+                                color: Colors.white,
+                                fontSize: 15,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ],
+                        )
+                      : Row(
+                          key: const ValueKey('idle'),
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Container(
+                              width: 28,
+                              height: 28,
+                              decoration: BoxDecoration(
+                                color: AppTheme.ice,
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: const Icon(
+                                Icons.save_outlined,
+                                color: Colors.white,
+                                size: 15,
+                              ),
+                            ),
+                            const SizedBox(width: 10),
+                            Text(
+                              'Save to Vault',
+                              style: GoogleFonts.outfit(
+                                color: Colors.white,
+                                fontSize: 15,
+                                fontWeight: FontWeight.w700,
+                              ),
                             ),
                           ],
                         ),
-                        child: AnimatedSwitcher(
-                          duration: const Duration(milliseconds: 300),
-                          child: _saving
-                              ? Row(
-                                  key: const ValueKey('saving'),
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    SizedBox(
-                                      width: 16,
-                                      height: 16,
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 2,
-                                        valueColor: AlwaysStoppedAnimation(
-                                          AppTheme.ice,
-                                        ),
-                                      ),
-                                    ),
-                                    const SizedBox(width: 10),
-                                    Text(
-                                      'Saving...',
-                                      style: GoogleFonts.outfit(
-                                        color: Colors.white,
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                  ],
-                                )
-                              : _saved
-                              ? Row(
-                                  key: const ValueKey('saved'),
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    const Icon(
-                                      Icons.check_circle_rounded,
-                                      color: Colors.white,
-                                      size: 20,
-                                    ),
-                                    const SizedBox(width: 8),
-                                    Text(
-                                      'Saved to Vault',
-                                      style: GoogleFonts.outfit(
-                                        color: Colors.white,
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.w700,
-                                      ),
-                                    ),
-                                  ],
-                                )
-                              : Row(
-                                  key: const ValueKey('idle'),
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Container(
-                                      width: 28,
-                                      height: 28,
-                                      decoration: BoxDecoration(
-                                        color: AppTheme.ice,
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                      child: const Icon(
-                                        Icons.save_outlined,
-                                        color: Colors.white,
-                                        size: 16,
-                                      ),
-                                    ),
-                                    const SizedBox(width: 10),
-                                    Text(
-                                      'Save to Wardrobe Vault',
-                                      style: GoogleFonts.outfit(
-                                        color: Colors.white,
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.w700,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                        ),
-                      ),
-                    )
-                    .animate()
-                    .fadeIn(delay: 200.ms, duration: 400.ms)
-                    .slideY(begin: 0.2, curve: Curves.easeOut),
+                ),
+              ),
+            ),
           ),
         ],
       ),

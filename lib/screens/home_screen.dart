@@ -1,3 +1,4 @@
+import 'package:ai_outfit_advisor/screens/compare_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -25,6 +26,8 @@ class HomeScreen extends StatelessWidget {
               _buildHero(context),
               const SizedBox(height: 32),
               _buildQuickActions(context),
+              const SizedBox(height: 12),
+              _buildCompareBanner(context),
               const SizedBox(height: 32),
               _buildTipsSection(),
               const SizedBox(height: 32),
@@ -318,6 +321,79 @@ class HomeScreen extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  Widget _buildCompareBanner(BuildContext context) {
+    return GestureDetector(
+      onTap: () => Navigator.push(
+        context,
+        PageRouteBuilder(
+          pageBuilder: (_, a, __) => const CompareScreen(),
+          transitionsBuilder: (_, a, __, child) => SlideTransition(
+            position: Tween<Offset>(
+              begin: const Offset(1, 0),
+              end: Offset.zero,
+            ).animate(CurvedAnimation(parent: a, curve: Curves.easeOutCubic)),
+            child: child,
+          ),
+          transitionDuration: const Duration(milliseconds: 400),
+        ),
+      ),
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(18),
+        decoration: BoxDecoration(
+          color: AppTheme.bgSecondary,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: AppTheme.border),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: AppTheme.ink,
+                borderRadius: BorderRadius.circular(11),
+              ),
+              child: const Icon(
+                Icons.scale_rounded,
+                color: Colors.white,
+                size: 20,
+              ),
+            ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Outfit Battle',
+                    style: GoogleFonts.outfit(
+                      color: AppTheme.ink,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  Text(
+                    'Compare two looks, AI picks the winner',
+                    style: GoogleFonts.outfit(
+                      color: AppTheme.inkHint,
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const Icon(
+              Icons.arrow_forward_ios_rounded,
+              size: 13,
+              color: AppTheme.chrome,
+            ),
+          ],
+        ),
+      ),
+    ).animate().fadeIn(delay: 500.ms, duration: 400.ms);
   }
 
   Widget _buildTipsSection() {
