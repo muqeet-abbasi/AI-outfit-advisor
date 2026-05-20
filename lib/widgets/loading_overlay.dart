@@ -1,3 +1,5 @@
+// ignore_for_file: unused_element
+
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -85,18 +87,20 @@ class _LoadingOverlayState extends State<LoadingOverlay>
 
     // Simulate steps completing
     Future.delayed(const Duration(milliseconds: 1800), () {
-      if (mounted)
+      if (mounted) {
         setState(() {
           _steps[2] = _Step('Style mapping', true);
           _completedSteps = 3;
         });
+      }
     });
     Future.delayed(const Duration(milliseconds: 3400), () {
-      if (mounted)
+      if (mounted) {
         setState(() {
           _steps[3] = _Step('Report compile', true);
           _completedSteps = 4;
         });
+      }
     });
   }
 

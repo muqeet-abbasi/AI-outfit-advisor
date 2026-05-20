@@ -4,7 +4,6 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../theme/app_theme.dart';
 import 'analyze_screen.dart';
-import 'occasion_planner_screen.dart';
 import 'main_shell.dart';
 
 class HomeScreen extends StatelessWidget {

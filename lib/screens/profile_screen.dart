@@ -247,7 +247,6 @@ class ProfileScreen extends StatelessWidget {
           ),
           child: Column(
             children: items.asMap().entries.map((e) {
-              final i = e.key;
               final item = e.value;
               return Column(
                 children: [

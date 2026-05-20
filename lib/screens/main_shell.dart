@@ -24,7 +24,6 @@ class MainShellState extends State<MainShell> with TickerProviderStateMixin {
   late final List<AnimationController> _iconControllers;
   late final List<Animation<double>> _iconScales;
   late final AnimationController _pillCtrl;
-  late final Animation<double> _pillAnim;
 
   final _screens = const [
     HomeScreen(),
@@ -86,7 +85,6 @@ class MainShellState extends State<MainShell> with TickerProviderStateMixin {
       vsync: this,
       duration: const Duration(milliseconds: 400),
     );
-    _pillAnim = CurvedAnimation(parent: _pillCtrl, curve: Curves.easeOutCubic);
 
     // Trigger initial icon bounce
     _iconControllers[0].forward();
