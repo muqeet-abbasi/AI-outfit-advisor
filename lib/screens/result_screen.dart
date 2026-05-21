@@ -412,6 +412,7 @@ class _ResultScreenState extends State<ResultScreen>
 // ── Score Ring ──
 class _ScoreRing extends StatelessWidget {
   final int score;
+
   const _ScoreRing({required this.score});
 
   @override
@@ -421,26 +422,56 @@ class _ScoreRing extends StatelessWidget {
         : score >= 60
         ? AppTheme.iceDeep
         : AppTheme.warning;
-    return Container(
-      width: 72,
-      height: 72,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        shape: BoxShape.circle,
-        boxShadow: [
-          BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 16),
-        ],
-      ),
+
+    return SizedBox(
+      width: 84,
+      height: 84,
       child: Stack(
         alignment: Alignment.center,
         children: [
-          CircularProgressIndicator(
-            value: score / 100,
-            strokeWidth: 4,
-            backgroundColor: AppTheme.border,
-            valueColor: AlwaysStoppedAnimation(color),
-            strokeCap: StrokeCap.round,
+          // OUTER SOFT CIRCLE
+          Container(
+            width: 70,
+            height: 70,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: color.withOpacity(0.12),
+                  blurRadius: 22,
+                  spreadRadius: 2,
+                  offset: const Offset(0, 10),
+                ),
+              ],
+            ),
           ),
+
+          // PROGRESS RING
+          SizedBox(
+            width: 60,
+            height: 60,
+            child: CircularProgressIndicator(
+              value: score / 100,
+              strokeWidth: 5,
+              backgroundColor: AppTheme.border.withOpacity(0.5),
+              valueColor: AlwaysStoppedAnimation<Color>(color),
+              strokeCap: StrokeCap.round,
+            ),
+          ),
+
+          // INNER CIRCLE
+          Container(
+            width: 58,
+            height: 58,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Colors.white,
+              border: Border.all(color: color.withOpacity(0.08), width: 1),
+            ),
+          ),
+
+          // SCORE CONTENT
           Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -448,13 +479,23 @@ class _ScoreRing extends StatelessWidget {
                 '$score',
                 style: GoogleFonts.outfit(
                   color: AppTheme.ink,
-                  fontSize: 20,
+                  fontSize: 22,
                   fontWeight: FontWeight.w800,
+                  height: 1,
                 ),
               ),
+
+              const SizedBox(height: 3),
+
               Text(
-                '/ 100',
-                style: GoogleFonts.outfit(color: AppTheme.inkHint, fontSize: 8),
+                '/100',
+                style: GoogleFonts.outfit(
+                  color: AppTheme.inkHint,
+                  fontSize: 9,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: 0.3,
+                  height: 1,
+                ),
               ),
             ],
           ),
