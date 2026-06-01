@@ -1,5 +1,5 @@
 
-<h1>StyleAI</h1>
+<center>StyleAI</center>
 
 <p>AI-powered outfit advisor built with Flutter & Google Gemini Vision</p>
 
