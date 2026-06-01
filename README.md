@@ -42,8 +42,6 @@
 
 </div>
 
-> Add your screenshots to `assets/screenshots/` and they will appear here automatically.
-
 ---
 
 ## 🤖 What is StyleAI?
