@@ -1,6 +1,7 @@
 
-<h1>StyleAI</h1>
+<div align="center">
 
+<h1>StyleAI</h1>
 <p>AI-powered outfit advisor built with Flutter & Google Gemini Vision</p>
 
 [![Flutter](https://img.shields.io/badge/Flutter-3.x-02569B?style=flat-square&logo=flutter&logoColor=white)](https://flutter.dev)
