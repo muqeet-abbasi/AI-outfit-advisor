@@ -1,6 +1,3 @@
-<div align="center">
-
-<img src="assets/icon/app_icon.png" alt="StyleAI Logo" width="100" height="100" style="border-radius: 20px"/>
 
 <h1>StyleAI</h1>
 
