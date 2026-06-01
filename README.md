@@ -14,20 +14,6 @@
 
 </div>
 
----
-
-## 📱 Demo
-
-<!-- Replace the URL below with your actual video URL -->
-> 🎬 **[Watch Full Demo Video](YOUR_VIDEO_URL_HERE)**
-
-[![StyleAI Demo](https://img.youtube.com/vi/YOUR_VIDEO_ID/maxresdefault.jpg)](https://www.youtube.com/watch?v=YOUR_VIDEO_ID)
-
-> **Tip:** Upload your screen recording to YouTube, then paste the video ID above.  
-> Or drag a GIF directly into this README on GitHub.
-
----
-
 ## ✦ Screenshots
 
 <div align="center">
