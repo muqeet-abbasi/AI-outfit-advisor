@@ -34,11 +34,11 @@
 
 | Splash | Home | Analyze | Result |
 |--------|------|---------|--------|
-| <img src="assets/screenshots/splash.png" width="180"/> | <img src="assets/screenshots/home.png" width="180"/> | <img src="assets/screenshots/analyze.png" width="180"/> | <img src="assets/screenshots/result.png" width="180"/> |
+| <img src="assets/screenshots/splash.jpeg" width="180"/> | <img src="assets/screenshots/home.jpeg" width="180"/> | <img src="assets/screenshots/analyze.jpeg" width="180"/> | <img src="assets/screenshots/result.jpeg" width="180"/> |
 
 | Style Chat | Outfit Battle | Occasion Planner | Wardrobe Vault |
 |------------|---------------|-----------------|----------------|
-| <img src="assets/screenshots/chat.png" width="180"/> | <img src="assets/screenshots/compare.png" width="180"/> | <img src="assets/screenshots/planner.png" width="180"/> | <img src="assets/screenshots/vault.png" width="180"/> |
+| <img src="assets/screenshots/chat.jpeg" width="180"/> | <img src="assets/screenshots/compare.jpeg" width="180"/> | <img src="assets/screenshots/planner.jpeg" width="180"/> | <img src="assets/screenshots/vault.jpeg" width="180"/> |
 
 </div>
 
